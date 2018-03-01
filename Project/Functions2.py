@@ -16,9 +16,30 @@ def gausselim(A):
         for i in range(j+1, n):
             mult = (G[i, j]/G[j, j])
             L[i, j] = mult
-            for k in range(j, m + 1):
+            for k in range(j, m + 2):
                 G[i, k] = G[i, k]-G[j, k]*mult
     return G, L
+
+
+def jacobi(A, S, S0):
+    n = A.shape[0]
+    diff = np.array([1.0]*n)  # Endringen fra iterasjon til iterasjon. Setter den lik 1 for alle ukjente fra start.
+    counter = 0
+    while np.amax(diff) > 0.0000001:  # Så lenge løsningen ikke har 6 riktige desimaler
+        tempS0 = np.array([0.0] * n)  # Array for å lagre den nye S0 siden Jakobi ikke bruker oppdaterte verdier
+        for i in range(0, n):
+            tot = S[i]
+            for j in range(0, i):
+                tot -= S0[j]*A[i, j]
+            for k in range(i+1, n):
+                tot -= S0[k]*A[i, k]
+            tempS0[i] = tot/A[i, i]
+        for i in range(0, n):
+            diff[i] = abs(S0[i]-tempS0[i])  # Oppdaterer differansen
+        S0 = tempS0  # Oppdater S0
+        counter += 1
+    print("Iterasjoner: ", counter)
+    return S, S0
 
 
 def tilbakesubstitusjon(Ain):
